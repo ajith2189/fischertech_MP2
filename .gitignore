@@ -1,0 +1,17 @@
+# CODESYS temp and per-user files
+*.bak
+*.~u
+*.opt
+*.compileinfo
+*.precompile
+*.precompilecache
+
+# Chat export (large, may contain credentials in screenshots)
+project info/Claude_Setup-codesys-with-pi_*.md
+
+# Duplicate of the unzipped GSDML folder
+*.zip
+
+# OS and Python leftovers
+__pycache__/
+Thumbs.db
