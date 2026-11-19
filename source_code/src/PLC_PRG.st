@@ -1,3 +1,33 @@
+PROGRAM PLC_PRG
+VAR CONSTANT
+    cInvBtn    : BOOL := FALSE;  // TRUE  if push-buttons read 0 when pressed
+    cInvLB     : BOOL := TRUE;   // TRUE  if light barriers read 0 when beam is blocked
+    cTimeout   : TIME := T#10S;  // max time for one movement step (then FAULT)
+    cMillTime  : TIME := T#3S;   // milling duration
+    cDrillTime : TIME := T#3S;   // drilling duration
+END_VAR
+VAR
+    // ---- commands: change them online (double-click value, Ctrl+F7) ----
+    bStart  : BOOL;                    // pulse TRUE to start (clears itself)
+    bStop   : BOOL;                    // pulse TRUE to stop / acknowledge fault
+    bManual : BOOL;                    // TRUE = manual test mode
+    xMan    : ARRAY[1..10] OF BOOL;    // manual outputs Q1..Q10
+
+    // ---- sequence ----
+    iState, iPrevState, iFaultState : INT;
+    bRun, bWatch : BOOL;
+    tWatch, tMill, tDrill, tPause, tLoad : TON;
+
+    // ---- inputs after polarity correction ----
+    bS1Front, bS1Rear, bS2Front, bS2Rear : BOOL;                  // I1..I4 (pressed = TRUE)
+    bLB_S1, bLB_Mill, bLB_Load, bLB_Drill, bLB_Exit : BOOL;       // I5, I6, I7, I8, I9 (blocked = TRUE)
+
+    // ---- outputs ----
+    qS1Back, qS1Fwd, qS2Back, qS2Fwd : BOOL;                      // Q1..Q4
+    qFeed, qBeltMill, qMill, qBeltDrill, qDrill, qBeltExit : BOOL;// Q5..Q10
+END_VAR
+
+
 // ---------- 1. READ INPUTS ----------
 bS1Rear   := GVL_IO.byBK_In.1  XOR cInvBtn;   // slider 1 rear button
 bS1Front  := GVL_IO.byBK_In.0  XOR cInvBtn;   // slider 1 front button
